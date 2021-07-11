@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core" 
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      >
+
+    <f:view contentType="text/html">
+        <h:head>
+            <title>Registro de empleados</title>
+        </h:head>
+
+        <h:body>
+
+            <h:form id="formListaEmpleados">
+
+                <p:dataTable id="dtEmpleados" widgetVar="tablaEmpleados" var="varEmpleado" value="#{empleadoMB.empleados}" emptyMessage="No existen registros"
+                             rows="50" paginator="true" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords}"
+                             scrollable="true">
+
+                    <f:facet name="header">
+
+                        <p:outputLabel value="Lista de empleados"></p:outputLabel>
+
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <p:commandButton value="Nuevo" icon="ui-icon-newwin"
+                                                 update=":frmEmpleado:panelEmpleado" oncomplete="PF('empleadoDialog').show()" action="#{empleadoMB.nuevoEmpleado()}" />
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton value="Buscar" icon="ui-icon-search"
+                                                 update=":formListaEmpleados:dtEmpleados" action="#{empleadoMB.buscarEmpleados()}" />
+                                
+                                <p:commandButton value="Exportar" ajax="false" icon="ui-icon-arrowthick-1-ne" action="#{empleadoMB.exportarEmpleados()}" />
+                            </f:facet>
+                        </p:toolbar>
+                    </f:facet>
+
+                    <p:column style="width:40px;text-align: center" headerText="Editar">
+                        <p:commandButton update=":frmEmpleado:panelEmpleado" oncomplete="PF('empleadoDialog').show()" icon="ui-icon-pencil" title="Editar">
+                            <f:setPropertyActionListener value="#{varEmpleado}" target="#{empleadoMB.empleado}" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="width:40px;text-align: center" headerText="Sueldo">
+                        <p:commandButton update=":frmSueldoEmpleado:panelEmpleado" oncomplete="PF('sueldoDialog').show()" icon="ui-icon-contact" title="Cambiar sueldo">
+                            <f:setPropertyActionListener value="#{varEmpleado}" target="#{empleadoMB.empleado}" />
+                        </p:commandButton>
+                    </p:column>
+
+
+                    <p:column headerText="Identificaci&oacute;n" sortBy="#{varEmpleado.identificacion}" >
+                        <h:outputText value="#{varEmpleado.identificacion}" />
+                    </p:column>
+                    <p:column headerText="Nombre" sortBy="#{varEmpleado.nombre}" >
+                        <h:outputText value="#{varEmpleado.nombre}" />
+                    </p:column>
+                    <p:column headerText="Departamento" sortBy="#{varEmpleado.departamento.nombre}" >
+                        <h:outputText value="#{varEmpleado.departamento.nombre}" />
+                    </p:column>
+                    <p:column headerText="Supervisor" sortBy="#{varEmpleado.supervisor.nombre}" >
+                        <h:outputText value="#{varEmpleado.supervisor eq null ? '' : varEmpleado.supervisor.nombre}" />
+                    </p:column>
+                    <p:column headerText="Sueldo" sortBy="#{varEmpleado.sueldo}" >
+                        <h:outputText value="#{varEmpleado.sueldo}" >
+                            <f:convertNumber currencySymbol="$" type="currency" maxFractionDigits="2" minFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Tel&eacute;fono" sortBy="#{varEmpleado.telefono}" >
+                        <h:outputText value="#{varEmpleado.telefono}" />
+                    </p:column>
+                    <p:column headerText="Direcci&oacute;n" sortBy="#{varEmpleado.direccion}" >
+                        <h:outputText value="#{varEmpleado.direccion}" />
+                    </p:column>
+                    <p:column headerText="Estado" sortBy="#{varEmpleado.estado}" >
+                        <h:outputText value="#{varEmpleado.estado eq true ? 'ACTIVO' : 'INACTIVO'}" />
+                    </p:column>
+
+
+                </p:dataTable>
+
+            </h:form>
+
+
+
+
+            <p:dialog widgetVar="empleadoDialog" modal="true" draggable="true" closable="true" resizable="true" 
+                      showHeader="true" appendTo="@(body)" width="500" header="Gesti&oacute;n de empleados">
+                <ui:include src="/empleados/gestionEmpleado.xhtml"></ui:include>
+            </p:dialog>
+
+            <p:dialog widgetVar="sueldoDialog" modal="true" draggable="true" closable="true" resizable="true" 
+                      showHeader="true" appendTo="@(body)" width="500" header="Cambio sueldo">
+                <ui:include src="/empleados/cambioSueldo.xhtml"></ui:include>
+            </p:dialog>
+
+
+        </h:body>
+    </f:view>
+</html>
